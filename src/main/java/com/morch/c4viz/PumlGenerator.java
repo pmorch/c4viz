@@ -40,16 +40,8 @@ public class PumlGenerator {
         long workspaceId = workspace.getId();
         ThemeUtils.loadThemes(workspace);
 
-        // From addDefaultViewsAndStyles(workspace);
-        if (workspace.getViews().isEmpty()) {
-            System.out.println(" - no views defined; creating default views");
-            workspace.getViews().createDefaultViews();
-        }
+        addDefaultViewsAndStyles(workspace);
 
-        Styles styles = workspace.getViews().getConfiguration().getStyles();
-        if (styles.getElements().isEmpty() && styles.getRelationships().isEmpty() && workspace.getViews().getConfiguration().getThemes() == null) {
-            System.out.println(" - no styles or themes defined; use the \"default\" theme to add some default styles");
-        }
         if (outputPath == null) {
             outputPath = new File(workspacePathFile.getCanonicalPath()).getParent();
         }
@@ -67,6 +59,18 @@ public class PumlGenerator {
         for (Diagram diagram : diagrams) {
             File file = new File(outputPath, String.format("%s-%s.puml", prefix(workspaceId), diagram.getKey()));
             writeToFile(file, diagram.getDefinition());
+        }
+    }
+
+    private void addDefaultViewsAndStyles(Workspace workspace) {
+        if (workspace.getViews().isEmpty()) {
+            System.out.println(" - no views defined; creating default views");
+            workspace.getViews().createDefaultViews();
+        }
+
+        Styles styles = workspace.getViews().getConfiguration().getStyles();
+        if (styles.getElements().isEmpty() && styles.getRelationships().isEmpty() && workspace.getViews().getConfiguration().getThemes() == null) {
+            System.out.println(" - no styles or themes defined; use the \"default\" theme to add some default styles");
         }
     }
 
