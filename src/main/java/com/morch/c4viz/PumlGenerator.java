@@ -6,9 +6,14 @@ import com.structurizr.io.Diagram;
 import com.structurizr.io.plantuml.C4PlantUMLExporter;
 import com.structurizr.model.*;
 import com.structurizr.view.*;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.core.DiagramDescription;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -58,10 +63,25 @@ public class PumlGenerator {
 
         Collection<Diagram> diagrams = export(workspace);
 
+        long totalPlantUMLMillis = 0;
         for (Diagram diagram : diagrams) {
+            System.out.println(String.format("Writing %s/%s.*", outputPath, getViewName(workspace, diagram.getView())));
+
             File file = new File(outputPath, String.format("%s.puml", getViewName(workspace, diagram.getView())));
             writeToFile(file, diagram.getDefinition());
+
+            long plantUMLStartTime = System.currentTimeMillis();
+
+            SourceStringReader reader = new SourceStringReader(diagram.getDefinition());
+            FileOutputStream fileOutputStream = new FileOutputStream(String.format("%s/%s.svg", outputPath, getViewName(workspace, diagram.getView())));
+            // final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            DiagramDescription desc = reader.outputImage(fileOutputStream, new FileFormatOption(FileFormat.SVG));
+            fileOutputStream.close();
+
+            long plantUMLDiffMillis = System.currentTimeMillis() - plantUMLStartTime;
+            totalPlantUMLMillis += plantUMLDiffMillis;
         }
+        System.out.println(String.format("Done - Writing %d plantuml files took %dms", diagrams.size(), totalPlantUMLMillis));
     }
 
     String getViewName(Workspace workspace, View view) {
@@ -73,7 +93,7 @@ public class PumlGenerator {
             prefix = "structurizr";
         }
 
-        return String.format("%s-%s.puml", prefix, view.getKey());
+        return String.format("%s-%s", prefix, view.getKey());
     }
 
     private Collection<Diagram> export(Workspace workspace) {
@@ -218,7 +238,6 @@ public class PumlGenerator {
     }
 
     private void writeToFile(File file, String content) throws Exception {
-        System.out.println(" - writing " + file.getCanonicalPath());
         BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
         writer.write(content);
         writer.close();

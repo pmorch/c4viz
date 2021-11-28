@@ -13,5 +13,7 @@ public class Main {
         }
         PumlGenerator generator = new PumlGenerator(workspacePathAsString, outputPath);
         generator.generate();
+        // See https://forum.plantuml.net/15083/why-does-this-4-line-puml-file-take-more-than-minute-to-render
+        System.exit(0);
     }
 }
