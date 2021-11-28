@@ -14,7 +14,6 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -23,9 +22,6 @@ import java.util.Collection;
 public class PumlGenerator {
     String workspacePath;
     String outputPath;
-
-    // TODO: ask for an upstream setUrl(null) method.
-    static private Field urlFieldAccessor = null;
 
     PumlGenerator(String workspacePath, String outputPath) {
         this.workspacePath = workspacePath;
@@ -201,26 +197,13 @@ public class PumlGenerator {
     private void resetElementURLs(View view) {
         for (ElementView elementView : view.getElements()) {
             Element element = elementView.getElement();
-            // TODO: ask for an upstream setUrl(null) method.
-            // Cannot set url to null with setUrl, so using reflection
-            // element.setUrl(null);
-            if (urlFieldAccessor == null) {
-                try {
-                    Class clazz = element.getClass();
-                    while (clazz != null && ! clazz.getSimpleName().equals("ModelItem")) {
-                        clazz = clazz.getSuperclass();
-                    }
-                    assert clazz != null;
-                    urlFieldAccessor = clazz.getDeclaredField("url");
-                    urlFieldAccessor.setAccessible(true);
-                } catch (NoSuchFieldException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            try {
-                urlFieldAccessor.set(element, null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+            element.setUrl(null);
+            // Older versions of setUrl ignored null - make sure this version doesn't
+            // See Issue #169: Feature Request: Allow API to set ModelItem#url = null
+            // https://github.com/structurizr/java/issues/169
+            // TODO: Remove check after element.setUrl(null)
+            if (element.getUrl() != null) {
+                throw new RuntimeException("setUrl(null) didn't work");
             }
         }
     }

@@ -8,10 +8,10 @@ version = '1.0.0'
 sourceCompatibility = '1.8'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     // For plantuml
     maven { url "https://repo1.maven.org/maven2/net/sourceforge/" }
-    mavenLocal()
 }
 
 dependencies {
@@ -23,6 +23,11 @@ dependencies {
     compile 'com.structurizr:structurizr-export:1.2.1'
     compile 'com.structurizr:structurizr-graphviz:1.6.1'
     compile 'net.sourceforge.plantuml:plantuml:1.2021.14'
+    // Update this when we have a released structurizr-core with fix for
+    // Issue #169: Feature Request: Allow API to set ModelItem#url = null
+    // https://github.com/structurizr/java/issues/169
+    logger.warn("*WARNING* Require HEAD/unreleased version of structurizr-core")
+    compile 'com.structurizr:structurizr-core:1.9.10'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
