@@ -1,11 +1,13 @@
 plugins {
+    id 'org.springframework.boot' version '2.6.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
 description = 'C4 Visualizer'
 group = 'com.morch'
 version = '1.0.0'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 repositories {
     mavenLocal()
@@ -28,7 +30,9 @@ dependencies {
     // https://github.com/structurizr/java/issues/169
     logger.warn("*WARNING* Require HEAD/unreleased version of structurizr-core")
     compile 'com.structurizr:structurizr-core:1.9.10'
+    compile 'org.springframework.boot:spring-boot-starter-web'
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
 
