@@ -50,15 +50,6 @@ jar {
     }
 }
 
-task fatJar(type: Jar) {
-	manifest {
-		attributes 'Main-Class': 'com.morch.c4viz.Main'
-	}
-	baseName = 'c4viz-all'
-	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-	with jar
-}
-
 task appNpmInstall(type: NpmTask) {
     description = "Installs all dependencies from package.json"
     workingDir = file("${project.projectDir}/frontend")
