@@ -11,11 +11,11 @@ public class Main {
     }
 
     private static void cliMain(String[] args) {
-        String workspacePathAsString = args[0];
-        String outputPath = args[1];
-        if (workspacePathAsString == null || outputPath == null) {
+        if (args.length < 2) {
             usage();
         }
+        String workspacePathAsString = args[0];
+        String outputPath = args[1];
         PumlGenerator generator = new PumlGenerator(workspacePathAsString, outputPath);
         generator.generate();
         // See https://forum.plantuml.net/15083/why-does-this-4-line-puml-file-take-more-than-minute-to-render
