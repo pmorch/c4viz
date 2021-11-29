@@ -10,7 +10,7 @@ public class RootController {
         public int bar = 234;
     }
 
-    @GetMapping("/")
+    @GetMapping("/api")
     public Foobar index() {
         return new Foobar();
     }

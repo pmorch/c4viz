@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.6.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "com.moowork.node" version "1.3.1"
 }
 
 description = 'C4 Visualizer'
@@ -17,8 +18,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'commons-cli:commons-cli:1.4'
-
     compile 'com.structurizr:structurizr-client:1.9.8'
     compile 'com.structurizr:structurizr-dsl:1.15.0'
     compile 'com.structurizr:structurizr-adr-tools:1.3.8'
@@ -57,3 +56,24 @@ task fatJar(type: Jar) {
 	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 	with jar
 }
+
+task appNpmInstall(type: NpmTask) {
+    description = "Installs all dependencies from package.json"
+    workingDir = file("${project.projectDir}/frontend")
+    args = ["install"]
+}
+
+task appNpmBuild(type: NpmTask) {
+    description = "Builds production version of the webapp"
+    workingDir = file("${project.projectDir}/frontend")
+    args = ["run", "build"]
+}
+
+task copyWebApp(type: Copy) {
+    from 'frontend/dist'
+    into 'build/resources/main/static/.'
+}
+
+appNpmBuild.dependsOn appNpmInstall
+copyWebApp.dependsOn appNpmBuild
+bootJar.dependsOn copyWebApp
