@@ -54,17 +54,26 @@ task appNpmInstall(type: NpmTask) {
     description = "Installs all dependencies from package.json"
     workingDir = file("${project.projectDir}/frontend")
     args = ["install"]
+    onlyIf {
+        System.env['SKIP_NPM'] == null || System.env['SKIP_NPM'] == "0"
+    }
 }
 
 task appNpmBuild(type: NpmTask) {
     description = "Builds production version of the webapp"
     workingDir = file("${project.projectDir}/frontend")
     args = ["run", "build"]
+    onlyIf {
+        System.env['SKIP_NPM'] == null || System.env['SKIP_NPM'] == "0"
+    }
 }
 
 task copyWebApp(type: Copy) {
     from 'frontend/dist'
     into 'build/resources/main/static/.'
+    onlyIf {
+        System.env['SKIP_NPM'] == null || System.env['SKIP_NPM'] == "0"
+    }
 }
 
 appNpmBuild.dependsOn appNpmInstall
