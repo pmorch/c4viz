@@ -1,6 +1,5 @@
 <template>
   <div class="foobar">
-      <p>Current page: {{ svgTitle }}</p>
       <div v-html="svgContents" />
   </div>
 </template>
@@ -8,10 +7,11 @@
 <script>
 export default {
   name: 'Foobar',
+  props: {
+    current: {}
+  },
   mounted: function () {
-        console.log("mounted", this);
         let thisVue = this
-
         // Patches welcome to replace this with a vanilla js approach,
         // as long as we agree that the 'a' elements
         // don't exist yet when this is called
@@ -19,47 +19,14 @@ export default {
             try {
                 let $e = jQuery(this);
                 let newName = $e.attr('href').replace(/https:..view.(.*)/, "$1")
-                thisVue.setViz(newName)
+                thisVue.$emit('changeView', newName)
             } catch(e) {
                 console.log("error setting new drawing", e)
             }
             return false
         })
-
-        fetch("/api/c4viz").then(res => res.json()).then((viz) => {
-            console.log("setting viz")
-            this.viz = viz
-            this.current = viz[0]
-        })
-
-  },
-  data: function () {
-    return {
-      current: null,
-      viz: null,
-      renderNumber: 0,
-    }
-  },
-  methods: {
-      setViz: function (newName) {
-        this.current = null
-        for (let v of this.viz) {
-            if (v.name === newName) {
-                this.current = v
-                break
-            }
-        }
-        console.log("setViz - new viz", this.current == null ? "null" : this.current.name)
-        this.renderNumber += 1;
-      }
   },
   computed: {
-      svgTitle: function () {
-          if (this.current == null) {
-            return "No page yet"
-          }
-          return this.current.name
-      },
       svgContents: function () {
           if (this.current == null) {
             return "no page yet"
