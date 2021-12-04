@@ -6,8 +6,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: 'Foobar',
   mounted: function () {
