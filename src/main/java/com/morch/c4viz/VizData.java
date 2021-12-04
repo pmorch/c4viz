@@ -8,6 +8,9 @@ public class VizData {
     // The PlantUML source
     private String puml;
 
+    public VizData() {
+    }
+
     public VizData(String type, String name, String svg, String puml) {
         this.type = type;
         this.name = name;
