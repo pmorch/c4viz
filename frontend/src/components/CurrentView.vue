@@ -1,12 +1,13 @@
 <template>
-  <div class="foobar">
-      <div v-html="svgContents" />
+  <div class="current-view h-100 w-100" v-html="svgContents">
   </div>
 </template>
 
 <script>
+import * as Constants from '../Constants.js'
+
 export default {
-  name: 'Foobar',
+  name: 'CurrentView',
   props: {
     current: {}
   },
@@ -15,7 +16,7 @@ export default {
         // Patches welcome to replace this with a vanilla js approach,
         // as long as we agree that the 'a' elements
         // don't exist yet when this is called
-        jQuery('.foobar').on('click', 'a', function () {    
+        jQuery('.current-view').on('click', 'a', function () {
             try {
                 let $e = jQuery(this);
                 let newName = $e.attr('href').replace(/https:..view.(.*)/, "$1")
@@ -29,7 +30,7 @@ export default {
   computed: {
       svgContents: function () {
           if (this.current == null) {
-            return "no page yet"
+            return Constants.PAGE_LOADING
           }
           
           return this.current.svg
@@ -39,5 +40,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
+  .current-view svg {
+      display: block;
+      margin: 0 auto;
+      max-height: 100%;
+      max-width: 100%;
+  }
 </style>

@@ -2,7 +2,8 @@ package com.morch.c4viz;
 
 public class VizData {
     private String type;
-    private String name;
+    private String shortName;
+    private String displayTitle;
     private String svg;
 
     // The PlantUML source
@@ -11,9 +12,10 @@ public class VizData {
     public VizData() {
     }
 
-    public VizData(String type, String name, String svg, String puml) {
+    public VizData(String type, String shortName, String displayTitle, String svg, String puml) {
         this.type = type;
-        this.name = name;
+        this.shortName = shortName;
+        this.displayTitle = displayTitle;
         this.svg = svg;
         this.puml = puml;
     }
@@ -26,12 +28,20 @@ public class VizData {
         this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public String getShortName() {
+        return shortName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getDisplayTitle() {
+        return displayTitle;
+    }
+
+    public void setDisplayTitle(String displayTitle) {
+        this.displayTitle = displayTitle;
     }
 
     public String getSvg() {

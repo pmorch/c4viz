@@ -16,7 +16,7 @@ public class Main {
         }
         String workspacePathAsString = args[0];
         String outputPath = args[1];
-        PumlGenerator generator = new PumlGenerator(workspacePathAsString, outputPath);
+        OutputGenerator generator = new OutputGenerator(workspacePathAsString, outputPath);
         generator.generate();
         // See https://forum.plantuml.net/15083/why-does-this-4-line-puml-file-take-more-than-minute-to-render
         System.exit(0);

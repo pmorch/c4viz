@@ -6,6 +6,7 @@ import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.io.Diagram;
 import com.structurizr.io.plantuml.C4PlantUMLExporter;
 import com.structurizr.model.*;
+import com.structurizr.util.StringUtils;
 import com.structurizr.view.*;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class PumlGenerator {
+public class OutputGenerator {
     String workspacePath;
     String outputPath;
 
-    PumlGenerator(String workspacePath, String outputPath) {
+    OutputGenerator(String workspacePath, String outputPath) {
         this.workspacePath = workspacePath;
         this.outputPath = outputPath;
     }
@@ -61,37 +62,55 @@ public class PumlGenerator {
 
         Collection<Diagram> diagrams = export(workspace);
 
-        long totalPlantUMLMillis = System.currentTimeMillis();
+        long outputStart = System.currentTimeMillis();
+        long totalPlantUMLMillis = 0;
         List<VizData> vizData = new ArrayList<>();
         for (Diagram diagram : diagrams) {
+            View view = diagram.getView();
             System.out.println(String.format("Writing %s/%s.*", outputPath, getViewName(workspace, diagram.getView())));
+
+            String displayTitle = view.getTitle();
+            if (StringUtils.isNullOrEmpty(displayTitle)) {
+                displayTitle = view.getName();
+            }
 
             File file = new File(outputPath, String.format("%s.puml", getViewName(workspace, diagram.getView())));
             writeToFile(file, diagram.getDefinition());
 
-            SourceStringReader reader = new SourceStringReader(diagram.getDefinition());
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            long plantUmlStart = System.currentTimeMillis();
+            SourceStringReader reader = new SourceStringReader(diagram.getDefinition());
             // DiagramDescription desc =
             reader.outputImage(byteArrayOutputStream, new FileFormatOption(FileFormat.SVG));
+            totalPlantUMLMillis += System.currentTimeMillis() - plantUmlStart;
+
             String svg = byteArrayOutputStream.toString(StandardCharsets.UTF_8);
+
+            // Remove comments from svg. That reduces size of .svg files and hence the c4viz.json file by 60%...
+            // https://stackoverflow.com/a/6806096/345716
+            svg = svg.replaceAll( "(?s)<!--.*?-->", "" );
 
             FileOutputStream fileOutputStream = new FileOutputStream(String.format("%s/%s.svg", outputPath, getViewName(workspace, diagram.getView())));
             fileOutputStream.write(svg.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();
 
             String type = diagram.getView().getClass().getSimpleName();
-            String name = getViewName(workspace, diagram.getView());
+            String shortName = getViewName(workspace, diagram.getView());
 
-            vizData.add(new VizData(type, name, svg, diagram.getDefinition()));
+            vizData.add(new VizData(type, shortName, displayTitle, svg, diagram.getDefinition()));
         }
+        String c4vizFileName = String.format("%s/c4viz.json", outputPath);
+        System.out.println("Writing " + c4vizFileName);
         ObjectMapper objectMapper = new ObjectMapper();
         String vizString = objectMapper.writeValueAsString(vizData);
-        FileOutputStream fileOutputStream = new FileOutputStream(String.format("%s/c4viz.json", outputPath));
+        FileOutputStream fileOutputStream = new FileOutputStream(c4vizFileName);
         fileOutputStream.write(vizString.getBytes(StandardCharsets.UTF_8));
         fileOutputStream.close();
         System.out.println(String.format(
-                "Done - Writing %d output files took %dms", diagrams.size()+1,
-                System.currentTimeMillis() - totalPlantUMLMillis
+                "Done - Writing output files took %d ms of which %d ms for PlantUML",
+                System.currentTimeMillis() - outputStart,
+                totalPlantUMLMillis
                 ));
     }
 
@@ -99,12 +118,10 @@ public class PumlGenerator {
         String prefix;
         long workspaceId = workspace.getId();
         if (workspaceId > 0) {
-            prefix = "structurizr-" + workspaceId;
+            return String.format("%d-%s", workspaceId, view.getKey());
         } else {
-            prefix = "structurizr";
+            return view.getKey();
         }
-
-        return String.format("%s-%s", prefix, view.getKey());
     }
 
     private Collection<Diagram> export(Workspace workspace) {
