@@ -13,7 +13,46 @@
         #svg-div {
             background-color: red;
         }
+        #svg-div > svg {
+            display: block;
+            margin: 0 auto;
+            max-height: 100%;
+            max-width: 100%;
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+
+    <script>
+        jQuery(function () {
+            fetch('structurizr-SystemLandscape.svg')
+                .then(response => {
+                    return response.text()
+                })
+                .then(text => {
+                    // Unfortunately, the output from PlantUML is not ideal for our display requirements,
+                    // so modify the SVG files that we got from the server before using them.
+                    var start = new Date().getTime();
+                    let hidden = jQuery('<div style="display: none"></div>')
+                    jQuery('body').append(hidden)
+                    let svg = hidden
+                        .append(text)
+                        .find('> svg')
+                    svg
+                        .removeAttr('preserveAspectRatio')
+                        .removeAttr('width')
+                        .removeAttr('height')
+                        .css('width', '')
+                        .css('height', '')
+                    jQuery("#svg-div").append(svg)
+                    hidden.remove()
+
+                    var end = new Date().getTime();
+                    var time = end - start;
+                    console.log('Execution time: ' + time);
+                })
+        })
+    </script>
+
 </head>
 
 <body>
@@ -25,8 +64,8 @@
             <div class="col-2">
                 Navigation
             </div>
-            <div id="svg-div" class="col-10 container-fluid d-flex flex-row mh-100 justify-content-center">
-                <img class="mh-100 mw-100" src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Ghostscript_Tiger.svg">
+            <div class="col-10 container-fluid d-flex flex-row mh-100 justify-content-center">
+                <div id="svg-div" class="h-100 w-100"></div>
             </div>
         </div>
     </div>
