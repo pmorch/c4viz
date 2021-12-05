@@ -1,20 +1,20 @@
 <template>
-  <div class="container-fluid vh-100 d-flex flex-column">
-    <div class="row">
-      <h1>C4Viz: {{ svgTitle }}</h1>
-      <p>Current page: {{ svgTitle }}</p>
-    </div>
-    <div class="row flex-grow-1 overflow-hidden">
-      <div class="col-2">View List</div>
-      <div class="col-10 container-fluid d-flex flex-row mh-100 justify-content-center">
-        <CurrentView :current="current" @changeView="changeView" />
-      </div>
-    </div>
-  </div>
+  <h1>Hello App!</h1>
+  <p>
+    <!-- use the router-link component for navigation. -->
+    <!-- specify the link by passing the `to` prop. -->
+    <!-- `<router-link>` will render an `<a>` tag with the correct `href` attribute -->
+    <router-link to="/">Go to Home</router-link><br>
+    <router-link to="/about">Go to About</router-link>
+  </p>
+  <!-- route outlet -->
+  <!-- component matched by the route will render here -->
+  <router-view></router-view>
 </template>
 
 <script>
 import CurrentView from "./components/CurrentView.vue";
+import About from "./components/About.vue";
 import * as Constants from './Constants.js'
 
 function modifyVizSvgs(vizArray) {
@@ -48,6 +48,8 @@ function setTitle(title) {
     document.title = "C4Viz"
   }
 }
+
+
 
 export default {
   name: "App",
@@ -98,6 +100,7 @@ export default {
   },
   components: {
     CurrentView,
+    About
   },
 };
 </script>
