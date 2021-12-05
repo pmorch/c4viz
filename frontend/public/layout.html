@@ -33,7 +33,6 @@
                     // so modify the SVG files that we got from the server before using them.
                     var start = new Date().getTime();
                     let hidden = jQuery('<div style="display: none"></div>')
-                    jQuery('body').append(hidden)
                     let svg = hidden
                         .append(text)
                         .find('> svg')
@@ -44,7 +43,6 @@
                         .css('width', '')
                         .css('height', '')
                     jQuery("#svg-div").append(svg)
-                    hidden.remove()
 
                     var end = new Date().getTime();
                     var time = end - start;
