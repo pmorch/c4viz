@@ -3,50 +3,72 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="/favicon.ico">
     <title>
-        Layout
+        SVG Viewer
     </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
     <style>
+        #main {
+            /*
+            overflow: hidden;
+            */
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+
         #header-row {
+            /*
             height: 100px;
+            */
+            flex: 0 0 100px;
+        }
+
+        #body-row {
+            /*
+            height: 100px;
+            */
+            flex-grow: 1 !important;
+            overflow: hidden;
         }
         #svg-div {
             background-color: red;
             flex-grow: 1 !important;
-            flex: 1 !important;
-        }
-        #svg-div img {
+            /*
+            position: relative;
+            overflow: auto;
             max-height: calc( 100vh - 100px );
+            */
+            max-height: 100%;
         }
 
+        #svg-div img {
+            /* Adding this makes it work. But I'd like to avoid #header-row having a fixed height,
+               and having logic here that knows about the entire page layout.
+            max-height: 100%;
+            max-height: calc( 100vh - 100px );
+            */
+            flex: 0 0 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid vh-100 d-flex flex-column">
+    <div id="main" class="container-fluid vh-100 d-flex flex-column">
         <div id="header-row" class="row">
-            <h1>C4Viz: SystemLandscape</h1>
+            <h1>SVG Viewer</h1>
         </div>
-        <div class="row">
+        <div id="body-row" class="row">
             <div class="col-2">
-                View List
+                Navigation
             </div>
-            <div id="svg-div" class="col-10">
-                <!--
-                    class="col-10 flex-grow-1"
-                 flex-grow-1
+            <div id="svg-div" class="col-10 container-fluid d-flex flex-row">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Ghostscript_Tiger.svg">
-                -->
-                <img src="structurizr-SystemLandscape.svg">
             </div>
         </div>
     </div>
