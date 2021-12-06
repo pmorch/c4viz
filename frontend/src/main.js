@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import RouteWrapper from './components/RouteWrapper.vue'
 import App from './App.vue'
-import About from "./components/About.vue";
 
 // 2. Define some routes
 // Each route should map to a component.
@@ -10,8 +10,20 @@ const routes = [
     {
         name: "views",
         path: '/:views*',
-        component: About,
-        props: true,
+        component: App,
+        props: route => {
+            // Why on earth would /a/b/c be an array: ['a','b','c'], but / be a string "" and not []?
+            // Fix that here, so App only sees an array.
+
+            // console.log(route);
+            let views;
+            if (route.params.views instanceof Array) {
+                views = route.params.views
+            } else {
+                views = []
+            }
+            return { views }
+        }
     },
 ]
 
@@ -24,6 +36,6 @@ const router = createRouter({
     routes, // short for `routes: routes`
 })
 
-const app = createApp(App)
+const app = createApp(RouteWrapper)
 app.use(router)
 app.mount('#app')
