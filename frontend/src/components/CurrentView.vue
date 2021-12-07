@@ -11,6 +11,12 @@ export default {
   props: {
     current: {}
   },
+  data: function () {
+    return {
+      /* This is similar to svgContentsRawFromCurrent except that svgContents is changed during animation */
+      svgContents: null,
+    }
+  },
   mounted: function () {
         let thisVue = this
         // Patches welcome to replace this with a vanilla js approach,
@@ -26,9 +32,10 @@ export default {
             }
             return false
         })
+        this.svgContents = this.svgContentsRawFromCurrent
   },
   computed: {
-      svgContents: function () {
+      svgContentsRawFromCurrent: function () {
           if (this.current == null) {
             return Constants.PAGE_LOADING
           }
@@ -36,6 +43,21 @@ export default {
           return this.current.svg
       }
   },
+  watch: {
+    svgContentsRawFromCurrent: function (newValue, oldValue) {
+      // Skip animation when showing first svg
+      if (oldValue == Constants.PAGE_LOADING) {
+        this.svgContents = newValue
+        return
+      }
+      let thisVue = this
+      let anmiationDuration = 'fast'
+      jQuery('.current-view').hide(anmiationDuration, function () {
+        thisVue.svgContents = newValue
+        jQuery('.current-view').show(anmiationDuration)
+      })
+    }
+  }
 }
 </script>
 
