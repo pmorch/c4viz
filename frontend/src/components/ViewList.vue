@@ -40,8 +40,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.view {
+<style>
+.view-list .view {
     border: 3px solid #d8d8d8;
     /* Same as padding for #view-list-scrollable (which has rule from Bootstrap's ".row  > *" )*/
     margin: calc(var(--bs-gutter-x) * .5) 0;
@@ -49,11 +49,17 @@ export default {
     border-radius: 5px;
 }
 
-.view:first-child {
+.view-list .view:first-child {
     margin-top: 0;
 }
 
-.view.current {
+.view-list .view.current {
     border-color: #888;
+}
+
+.view-list svg {
+    max-height: 200px;
+    display: block;
+    margin: 0 auto;
 }
 </style>
