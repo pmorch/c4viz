@@ -27,8 +27,9 @@ dependencies {
     // Update this when we have a released structurizr-core with fix for
     // Issue #169: Feature Request: Allow API to set ModelItem#url = null
     // https://github.com/structurizr/java/issues/169
-    logger.warn("*WARNING* Require HEAD/unreleased version of structurizr-core")
-    compile 'com.structurizr:structurizr-core:1.9.10'
+    // logger.warn("*WARNING* Require HEAD/unreleased version of structurizr-core")
+    // compile 'com.structurizr:structurizr-core:1.9.10'
+    compile 'com.structurizr:structurizr-core:1.9.9'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 

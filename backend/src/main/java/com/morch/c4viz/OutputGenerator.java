@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -25,6 +26,11 @@ import java.util.List;
 public class OutputGenerator {
     String workspacePath;
     String outputPath;
+
+    // TODO: Remove this once we're using a released structurizr/java
+    // see: Feature Request: Allow API to set ModelItem#url = null
+    // https://github.com/structurizr/java/issues/169
+    static private Field urlFieldAccessor = null;
 
     OutputGenerator(String workspacePath, String outputPath) {
         this.workspacePath = workspacePath;
@@ -230,12 +236,32 @@ public class OutputGenerator {
         for (ElementView elementView : view.getElements()) {
             Element element = elementView.getElement();
             element.setUrl(null);
-            // Older versions of setUrl ignored null - make sure this version doesn't
+            // Older versions of setUrl ignore element.setUrl(null) - make sure this version doesn't
             // See Issue #169: Feature Request: Allow API to set ModelItem#url = null
             // https://github.com/structurizr/java/issues/169
             // TODO: Remove check after element.setUrl(null)
             if (element.getUrl() != null) {
-                throw new RuntimeException("setUrl(null) didn't work");
+                if (urlFieldAccessor == null) {
+                    try {
+                        Class clazz = element.getClass();
+                        while (clazz != null && ! clazz.getSimpleName().equals("ModelItem")) {
+                            clazz = clazz.getSuperclass();
+                        }
+                        assert clazz != null;
+                        urlFieldAccessor = clazz.getDeclaredField("url");
+                        urlFieldAccessor.setAccessible(true);
+                    } catch (NoSuchFieldException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                try {
+                    urlFieldAccessor.set(element, null);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (element.getUrl() != null) {
+                throw new RuntimeException("Couldn't element.setUrl(null)");
             }
         }
     }
