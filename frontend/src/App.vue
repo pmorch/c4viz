@@ -92,7 +92,7 @@ export default {
     fetch("/api/c4viz")
       .then((res) => res.json())
       .then((vizArray) => {
-        console.log("setting vizArray");
+        // console.log("setting vizArray");
         modifyVizSvgs(vizArray)
         this.vizArray = vizArray;
         for (let viz of vizArray) {
