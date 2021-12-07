@@ -11,6 +11,8 @@ import com.structurizr.view.*;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,8 @@ public class OutputGenerator {
     // see: Feature Request: Allow API to set ModelItem#url = null
     // https://github.com/structurizr/java/issues/169
     static private Field urlFieldAccessor = null;
+
+    static private Logger logger = LoggerFactory.getLogger(OutputGenerator.class);
 
     OutputGenerator(String workspacePath, String outputPath) {
         this.workspacePath = workspacePath;
@@ -73,7 +77,7 @@ public class OutputGenerator {
         List<VizData> vizData = new ArrayList<>();
         for (Diagram diagram : diagrams) {
             View view = diagram.getView();
-            System.out.println(String.format("Writing %s/%s.*", outputPath, getViewName(workspace, diagram.getView())));
+            logger.debug("Writing {}/{}.*", outputPath, getViewName(workspace, diagram.getView()));
 
             String displayTitle = view.getTitle();
             if (StringUtils.isNullOrEmpty(displayTitle)) {
@@ -106,18 +110,19 @@ public class OutputGenerator {
 
             vizData.add(new VizData(type, shortName, displayTitle, svg, diagram.getDefinition()));
         }
-        String c4vizFileName = String.format("%s/c4viz.json", outputPath);
-        System.out.println("Writing " + c4vizFileName);
+        String c4vizFileName = String.format("%s/c4.viz.json", outputPath);
+        logger.debug("Writing " + c4vizFileName);
         ObjectMapper objectMapper = new ObjectMapper();
         String vizString = objectMapper.writeValueAsString(vizData);
         FileOutputStream fileOutputStream = new FileOutputStream(c4vizFileName);
         fileOutputStream.write(vizString.getBytes(StandardCharsets.UTF_8));
         fileOutputStream.close();
-        System.out.println(String.format(
-                "Done - Writing output files took %d ms of which %d ms for PlantUML",
+        logger.info(
+                "Done - Writing output files to {} took {} ms of which {} ms for PlantUML",
+                outputPath,
                 System.currentTimeMillis() - outputStart,
                 totalPlantUMLMillis
-                ));
+                );
     }
 
     String getViewName(Workspace workspace, View view) {
@@ -268,13 +273,13 @@ public class OutputGenerator {
 
     private void addDefaultViewsAndStyles(Workspace workspace) {
         if (workspace.getViews().isEmpty()) {
-            System.out.println(" - no views defined; creating default views");
+            logger.debug("no views defined; creating default views");
             workspace.getViews().createDefaultViews();
         }
 
         Styles styles = workspace.getViews().getConfiguration().getStyles();
         if (styles.getElements().isEmpty() && styles.getRelationships().isEmpty() && workspace.getViews().getConfiguration().getThemes() == null) {
-            System.out.println(" - no styles or themes defined; use the \"default\" theme to add some default styles");
+            logger.debug("no styles or themes defined; use the \"default\" theme to add some default styles");
         }
     }
 
