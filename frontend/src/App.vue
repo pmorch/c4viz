@@ -1,7 +1,10 @@
 <template>
   <div class="container-fluid vh-100 d-flex flex-column">
     <div class="row">
-      <h1>C4Viz: {{ svgTitle }}</h1>
+      <h1>
+        <img src="/structurizr-banner.png" style="height: 50px">
+        C4Viz: {{ svgTitle }}
+      </h1>
       <!-- Handy for debugging:
         <p>Current page: {{ svgTitle }}</p>
         <p>views: {{ views }}</p>
@@ -21,7 +24,9 @@
       </nav>
     </div>
     <div class="row flex-grow-1 overflow-hidden">
-      <div class="col-2">View List</div>
+      <div id="view-list-scrollable" class="col-2 h-100" style="overflow-y: scroll">
+        <ViewList :vizArray="vizArray" :current="current" />
+      </div>
       <div class="col-10 container-fluid d-flex flex-row mh-100 justify-content-center">
         <CurrentView :current="current" @changeView="navigateSubview" />
       </div>
@@ -31,7 +36,7 @@
 
 <script>
 import CurrentView from "./components/CurrentView.vue";
-import About from "./components/About.vue";
+import ViewList from "./components/ViewList.vue";
 import * as Constants from './Constants.js'
 
 function modifyVizSvgs(vizArray) {
@@ -50,6 +55,13 @@ function modifyVizSvgs(vizArray) {
       .css("width", "")
       .css("height", "");
     view.svg = svg[0].outerHTML
+    svg
+      .find('a')
+      .removeAttr('href')
+      .removeAttr('xlink:href')
+      .removeAttr('title')
+      .removeAttr('xlink:title')
+    view.svgNoLinks = svg[0].outerHTML
   }
 
   // var end = new Date().getTime();
@@ -107,8 +119,6 @@ export default {
       } else {
         this.current = null
       }
-      console.log("views watcher", views, this.current)
-
     }
   },
   computed: {
@@ -150,7 +160,7 @@ export default {
   },
   components: {
     CurrentView,
-    About
+    ViewList,
   },
 };
 </script>
