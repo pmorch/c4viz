@@ -18,8 +18,6 @@ public class Main {
         String outputPath = args[1];
         OutputGenerator generator = new OutputGenerator(workspacePathAsString, outputPath);
         generator.generate();
-        // See https://forum.plantuml.net/15083/why-does-this-4-line-puml-file-take-more-than-minute-to-render
-        System.exit(0);
     }
 
     private static void springMain(String[] args) {
