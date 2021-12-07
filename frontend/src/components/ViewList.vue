@@ -43,10 +43,16 @@ export default {
 <style scoped>
 .view {
     border: 3px solid #d8d8d8;
-    margin: 5px 0;
+    /* Same as padding for #view-list-scrollable (which has rule from Bootstrap's ".row  > *" )*/
+    margin: calc(var(--bs-gutter-x) * .5) 0;
     padding: 3px;
     border-radius: 5px;
 }
+
+.view:first-child {
+    margin-top: 0;
+}
+
 .view.current {
     border-color: #888;
 }
