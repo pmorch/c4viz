@@ -22,6 +22,9 @@
           </template>
         </ol>
       </nav>
+      <!--
+      renderingStructurizrDsl: {{ renderingStructurizrDsl}}
+       -->
     </div>
     <div class="row flex-grow-1 overflow-hidden">
       <div id="view-list-scrollable" class="col-2 h-100" style="overflow-y: scroll">
@@ -85,14 +88,13 @@ export default {
       current: null,
       vizArray: null,
       vizMap: {},
-      renderNumber: 0,
+      renderingStructurizrDsl: false,
     };
   },
   mounted: function () {
-    fetch("/api/c4viz")
-      .then((res) => res.json())
-      .then((vizArray) => {
+    const udpateVizData = (vizArray) => {
         // console.log("setting vizArray");
+        this.renderingStructurizrDsl = false
         modifyVizSvgs(vizArray)
         this.vizArray = vizArray;
         for (let viz of vizArray) {
@@ -104,7 +106,28 @@ export default {
         } else {
           this.$router.replace({ name: 'views', params: { views: [vizArray[0].shortName] } })
         }
-      });
+    }
+    const fetchVizData = (render) => {
+      let url = "/api/c4viz"
+      if (render) {
+        url += "?render=true"
+      }
+      fetch(url)
+        .then((res) => res.json())
+        .then((result) => {
+          if ("pending" in result) {
+            if (render) {
+              throw new Error("How could result be pending with render == true");
+            }
+            this.renderingStructurizrDsl = true
+            // Try again - this time with rendering true
+            fetchVizData(true);
+          } else if ("viz" in result) {
+            udpateVizData(result.viz);
+          }
+        });
+    }
+    fetchVizData(false)
   },
   methods: {
     navigateSubview: function (newName) {
