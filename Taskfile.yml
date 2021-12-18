@@ -1,0 +1,68 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  FE_PORT: 3000
+  BE_PORT: 9000
+  version: 1.0.0
+
+env:
+  C4VIZ_CACHE: /tmp/cache
+  C4VIZ_SOURCE: big-bank-plc.dsl
+  C4VIZ_SOURCE_DIR:
+    sh: echo $PWD/sourceDir
+
+tasks:
+  default:
+    desc: By default run the serve-backend task that exposes the complete application
+    deps:
+      - serve-backend
+  build-backend:
+    desc: Build the backend
+    cmds:
+      - ./gradlew build
+    dir: backend
+  build-backend-no-npm:
+    desc: Build the backend without building the frontend with npm (is quicker)
+    cmds:
+      - ./gradlew build
+    dir: backend
+    env:
+      SKIP_NPM: 1
+  build-frontend:
+    desc: Build the frontend with npm
+    cmds:
+      - npm install
+      - npm run build
+    dir: frontend
+    env:
+      SKIP_NPM: 1
+  serve-backend:
+    desc: Run the backend on port {{ .BE_PORT }} (without the frontend)
+    dir: backend
+    deps:
+      - build-backend
+    cmds:
+      - "echo testing that dir exists: $C4VIZ_SOURCE_DIR"
+      - test -d $C4VIZ_SOURCE_DIR
+      - java -jar build/libs/c4viz-{{ .version }}.jar
+    env:
+      SERVER_PORT: "{{ .BE_PORT }}"
+  serve-frontend:
+    desc: Run the frontend serving on port {{ .FE_PORT }}
+    cmds:
+      - npm run serve -- --port {{ .FE_PORT }}
+    dir: frontend
+  docker-build:
+    desc: Builds the docker image
+    deps:
+      - build-backend
+    cmds:
+      - echo Building docker image c4viz:$projversion
+      - docker build --build-arg version=$projversion -t c4viz:$projversion .
+    env:
+      projversion:
+        sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
+        dir: backend
