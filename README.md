@@ -14,6 +14,13 @@ updated `.dsl` file, so you can use that workflow to edit `.dsl` files.
 
 ## Getting Started
 
+### Demo Server
+
+You can see this running on my [demo server](http://c4viz.morch.com:9000). Be
+nice to it, it is a tiny cheap server. There are no guarantees that it will
+stick around, do don't rely on it being online forever, but host your own
+server if you need it.
+
 ### Run as docker container
 
 The easiest is to run this from a docker container:
@@ -26,7 +33,7 @@ The easiest is to run this from a docker container:
         -e C4VIZ_SOURCE=big-bank-plc.dsl \
         -e C4VIZ_SOURCE_DIR=/sourceDir \
         -u $(id -u):$(id -g) \
-        c4viz:$version
+        pmorch/c4viz:latest
 
 You'll need a `big-bank-plc.dsl` file in the `./sourceDir` or modify
 `C4VIZ_SOURCE` (and perhaps `C4VIZ_SOURCE_DIR`) to point to *your*
@@ -42,6 +49,10 @@ directory).
 The above docker command mounts a local directory, which is useful for local
 development and for editing of `.dsl` files. You can also build your own docker
 image directly containing your `.dsl` file(s) so it is self-contained.
+
+The `pmorch/c4viz` uses the [docker hub
+image](https://hub.docker.com/r/pmorch/c4viz). In the above example, it uses
+the `:latest` tag but you might want to pick a fixed version.
 
 ### Run from command line
 
@@ -130,7 +141,7 @@ The process of `./gradlew build` for every frontend change is tedious, so there 
 `./frontend/vue.config.js` is configured to proxy the backend calls to http://localhost:9000.
 
 So to develop the frontend, first start the spring backend on port 9000, then start the frontend.
-Now accessing http://localhost:8080 will access the Vue development server,
+Now accessing http://localhost:3000 will access the Vue development server,
 but any backend requests will be proxied to spring boot. So:
 
 Terminal 1 for the backend:
