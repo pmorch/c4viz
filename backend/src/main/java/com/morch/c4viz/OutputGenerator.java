@@ -3,6 +3,7 @@ package com.morch.c4viz;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.structurizr.Workspace;
 import com.structurizr.dsl.StructurizrDslParser;
+import com.structurizr.dsl.StructurizrDslParserException;
 import com.structurizr.io.Diagram;
 import com.structurizr.io.plantuml.C4PlantUMLExporter;
 import com.structurizr.model.*;
@@ -41,9 +42,11 @@ public class OutputGenerator {
         this.outputPath = outputPath;
     }
 
-    void generate() {
+    void generate() throws StructurizrDslParserException {
         try {
             generateUnsafely();
+        } catch (StructurizrDslParserException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

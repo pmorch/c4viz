@@ -2,6 +2,7 @@ package com.morch.c4viz;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Hashing;
+import com.structurizr.dsl.StructurizrDslParserException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -57,7 +58,7 @@ public class SourceHandler {
         return Paths.get(this.cacheDir, hash, "c4.viz.json");
     }
 
-    private VizResult render(String hash, Path source) throws IOException {
+    private VizResult render(String hash, Path source) throws IOException, StructurizrDslParserException {
         Path sourcePath = getVizSourcePathFromHash(hash);
         if ( ! Files.exists(sourcePath)) {
             Path sourceDir = getVizDirPathFromHash(hash);
@@ -142,7 +143,7 @@ public class SourceHandler {
         return resolved;
     }
 
-    public VizOutput getResult(String source, String render) throws IOException {
+    public VizOutput getResult(String source, String render) throws IOException, StructurizrDslParserException {
         String hash = getSourceHash(source);
         Path sourceFile = resolveSource(hash, source);
         if (sourceFile.toString().toLowerCase().endsWith(".viz.json")) {

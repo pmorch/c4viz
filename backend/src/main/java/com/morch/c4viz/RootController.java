@@ -1,8 +1,11 @@
 package com.morch.c4viz;
 
+import com.structurizr.dsl.StructurizrDslParserException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
@@ -24,6 +27,12 @@ public class RootController {
         if (source == null) {
             throw new IllegalArgumentException("Need a source parameter");
         }
-        return sourceHandler.getResult(source, render);
+        try {
+            return sourceHandler.getResult(source, render);
+        } catch (StructurizrDslParserException exc) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, exc.getMessage(), exc
+            );
+        }
     }
 }

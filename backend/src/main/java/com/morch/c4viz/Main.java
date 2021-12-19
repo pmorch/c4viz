@@ -17,7 +17,11 @@ public class Main {
         String workspacePathAsString = args[0];
         String outputPath = args[1];
         OutputGenerator generator = new OutputGenerator(workspacePathAsString, outputPath);
-        generator.generate();
+        try {
+            generator.generate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void springMain(String[] args) {
