@@ -77,6 +77,9 @@ tasks:
       - echo Release latest version $projversion
       - docker tag c4viz:$projversion pmorch/c4viz:latest
       - docker push pmorch/c4viz:latest
+    env:
+      projversion:
+        sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
   release:
     deps:
       - docker-build
@@ -91,6 +94,5 @@ tasks:
       - docker tag c4viz:$projversion pmorch/c4viz:$projversion
       - docker push pmorch/c4viz:$projversion
     env:
-      SERVER_PORT: "{{ .BE_PORT }}"
       projversion:
         sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
