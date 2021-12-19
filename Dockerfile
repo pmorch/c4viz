@@ -15,6 +15,7 @@ RUN mkdir $C4VIZ_CACHE && \
     chown 1000:1000 $C4VIZ_CACHE
 
 COPY backend/build/libs/c4viz-${version}.jar /c4viz-${version}.jar
+COPY sourceDir /sourceDir
 
 USER 1000:1000
 RUN mkdir /tmp/cache
