@@ -25,6 +25,10 @@ server if you need it.
 
 The easiest is to run this from a docker container:
 
+    docker-compose up
+
+or
+
     docker run \
         --rm -it \
         -v $PWD/sourceDir:/sourceDir \
