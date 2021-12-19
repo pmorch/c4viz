@@ -54,7 +54,7 @@ The above docker command mounts a local directory, which is useful for local
 development and for editing of `.dsl` files. You can also build your own docker
 image directly containing your `.dsl` file(s) so it is self-contained.
 
-The `pmorch/c4viz` uses the [docker hub
+The `pmorch/c4viz` is this [docker hub
 image](https://hub.docker.com/r/pmorch/c4viz). In the above example, it uses
 the `:latest` tag but you might want to pick a fixed version.
 
@@ -64,7 +64,7 @@ You'll need these installed:
 
 * java 11+
 * node 10+
-* [[task](https://taskfile.dev)]([task](https://taskfile.dev))
+* [task](https://taskfile.dev)
 
 Now:
 
