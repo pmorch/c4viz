@@ -22,6 +22,7 @@ tasks:
     cmds:
       - ./gradlew build
     dir: backend
+    run: once
   build-backend-no-npm:
     desc: Build the backend without building the frontend with npm (is quicker)
     cmds:
@@ -66,3 +67,30 @@ tasks:
       projversion:
         sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
         dir: backend
+    run: once
+
+  # And these two just for maintainers who can tag git and push docker images...
+  release-latest:
+    deps:
+      - docker-build
+    cmds:
+      - echo Release latest version $projversion
+      - docker tag c4viz:$projversion pmorch/c4viz:latest
+      - docker push pmorch/c4viz:latest
+  release:
+    deps:
+      - docker-build
+    cmds:
+      - echo Attempting to release version $projversion
+      # Test that the git tag doesn't exist already
+      - bash -c "! git show $projversion > /dev/null 2>&1"
+      # Test that the docker tag doesn't exist already
+      - bash -c "! docker pull pmorch/c4viz:$projversion > /dev/null 2>&1"
+      - git tag $projversion
+      - git push origin $projversion
+      - docker tag c4viz:$projversion pmorch/c4viz:$projversion
+      - docker push pmorch/c4viz:$projversion
+    env:
+      SERVER_PORT: "{{ .BE_PORT }}"
+      projversion:
+        sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
