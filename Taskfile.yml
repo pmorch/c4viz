@@ -3,10 +3,8 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
   FE_PORT: 3000
   BE_PORT: 9000
-  version: 1.0.0
 
 env:
   C4VIZ_CACHE: /tmp/c4vizCache
@@ -41,16 +39,17 @@ tasks:
       SKIP_NPM: 1
   serve-backend:
     desc: Run the backend on port {{ .BE_PORT }} (without the frontend)
-    dir: backend
     deps:
       - build-backend
     cmds:
       - "echo testing that dir exists: $C4VIZ_SOURCE_DIR"
       - test -d $C4VIZ_SOURCE_DIR
       - test -d $C4VIZ_CACHE || mkdir $C4VIZ_CACHE
-      - java -jar build/libs/c4viz-{{ .version }}.jar
+      - java -jar backend/build/libs/c4viz-${projversion}.jar
     env:
       SERVER_PORT: "{{ .BE_PORT }}"
+      projversion:
+        sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
   serve-frontend:
     desc: Run the frontend serving on port {{ .FE_PORT }}
     cmds:
