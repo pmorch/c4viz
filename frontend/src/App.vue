@@ -22,17 +22,18 @@
           </template>
         </ol>
       </nav>
-      <!--
-      renderingStructurizrDsl: {{ renderingStructurizrDsl}}
-       -->
     </div>
-    <div class="row flex-grow-1 overflow-hidden">
+    <div v-if="serverError === null" class="row flex-grow-1 overflow-hidden">
       <div id="view-list-scrollable" class="col-2 h-100" style="overflow-y: scroll">
         <ViewList :vizArray="vizArray" :current="current" />
       </div>
       <div class="col-10 container-fluid d-flex flex-row mh-100 justify-content-center">
         <CurrentView :current="current" @changeView="navigateSubview" />
       </div>
+    </div>
+    <div v-else>
+      <h1>Error from server</h1>
+      {{ serverError }}
     </div>
   </div>
 </template>
@@ -88,13 +89,12 @@ export default {
       current: null,
       vizArray: null,
       vizMap: {},
-      renderingStructurizrDsl: false,
+      serverError: null,
     };
   },
   mounted: function () {
     const udpateVizData = (vizArray) => {
         // console.log("setting vizArray");
-        this.renderingStructurizrDsl = false
         modifyVizSvgs(vizArray)
         this.vizArray = vizArray;
         for (let viz of vizArray) {
@@ -108,9 +108,10 @@ export default {
         }
     }
     const fetchVizData = (render) => {
-      let url = "/api/c4viz"
+      let url = new URL(document.location)
+      url.pathname = "/api/c4viz"
       if (render) {
-        url += "?render=true"
+        url.searchParams.append('render', 'true')
       }
       fetch(url)
         .then((res) => res.json())
@@ -119,12 +120,20 @@ export default {
             if (render) {
               throw new Error("How could result be pending with render == true");
             }
-            this.renderingStructurizrDsl = true
             // Try again - this time with rendering true
             fetchVizData(true);
           } else if ("viz" in result) {
             udpateVizData(result.viz);
+          } else {
+            if ("message" in result) {
+              this.serverError = result.message
+            } else {
+              this.serverError = "Unexpected message from server"
+            }
           }
+        })
+        .catch(error => {
+          console.log("error", error)
         });
     }
     fetchVizData(false)
