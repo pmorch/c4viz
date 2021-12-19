@@ -25,8 +25,12 @@ export default {
         jQuery('.current-view').on('click', 'a', function () {
             try {
                 let $e = jQuery(this);
-                let newName = $e.attr('href').replace(/https:..view.(.*)/, "$1")
-                thisVue.$emit('changeView', newName)
+                if ($e.attr('href').match(/https:\/\/view\//)) {
+                  let newName = $e.attr('href').replace(/https:\/\/view\/(.*)/, "$1")
+                  thisVue.$emit('changeView', newName)
+                } else {
+                  return true;
+                }
             } catch(e) {
                 console.log("error setting new drawing", e)
             }
