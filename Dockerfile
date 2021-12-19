@@ -11,4 +11,6 @@ ENV C4VIZ_VERSION=${version}
 
 COPY backend/build/libs/c4viz-${version}.jar /c4viz-${version}.jar
 
+USER 1000:1000
+
 ENTRYPOINT [ "bash", "-c", "java -jar /c4viz-${C4VIZ_VERSION}.jar \"$@\"", "--" ]
