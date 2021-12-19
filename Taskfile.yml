@@ -9,7 +9,7 @@ vars:
   version: 1.0.0
 
 env:
-  C4VIZ_CACHE: /tmp/cache
+  C4VIZ_CACHE: /tmp/c4vizCache
   C4VIZ_SOURCE: big-bank-plc.dsl
   C4VIZ_SOURCE_DIR:
     sh: echo $PWD/sourceDir
@@ -47,6 +47,7 @@ tasks:
     cmds:
       - "echo testing that dir exists: $C4VIZ_SOURCE_DIR"
       - test -d $C4VIZ_SOURCE_DIR
+      - test -d $C4VIZ_CACHE || mkdir $C4VIZ_CACHE
       - java -jar build/libs/c4viz-{{ .version }}.jar
     env:
       SERVER_PORT: "{{ .BE_PORT }}"
