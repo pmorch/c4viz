@@ -14,6 +14,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 
 @Service
 public class SourceHandler {
@@ -56,6 +58,20 @@ public class SourceHandler {
     private Path getVizSourcePathFromHash(String hash) throws IOException {
         getVizDirPathFromHash(hash);
         return Paths.get(this.cacheDir, hash, "c4.viz.json");
+    }
+
+    private boolean needsRender(String hash, Path source) throws IOException {
+        Path hashPath = getVizSourcePathFromHash(hash);
+        if ( ! Files.exists(hashPath)) {
+            return true;
+        }
+        long hashTime = hashPath.toFile().lastModified();
+        long sourceTime = source.toFile().lastModified();
+        if (sourceTime > hashTime) {
+            FileSystemUtils.deleteRecursively(hashPath.getParent());
+            return true;
+        }
+        return false;
     }
 
     private VizResult render(String hash, Path source) throws IOException, StructurizrDslParserException {
@@ -152,6 +168,9 @@ public class SourceHandler {
             if (render != null && render.equals("true")) {
                 return render(hash, sourceFile);
             } else {
+                if (needsRender(hash, sourceFile)) {
+                    return new VizPending();
+                }
                 return existingRender(hash);
             }
         }
