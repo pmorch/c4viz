@@ -30,3 +30,5 @@ out
 *.sh
 
 .envrc
+
+/sourceDir
