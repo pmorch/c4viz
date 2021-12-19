@@ -14,13 +14,13 @@ You'll need java 11+ and node 10+ installed.
     ./gradlew build
     SERVER_PORT=9000 java -jar build/libs/c4viz-$VERSION.jar
 
-Now access http://localhost:9000, and you're good to go! 
+Now access http://localhost:9000, and you're good to go!
 
 # Structure of this project
 
-There is a separate Spring Boot backend (in `./`) and a Vue frontend (in `./frontend/`).
+There is a separate Spring Boot backend (in `./backend`) and a Vue frontend (in `./frontend/`).
 
-During the build process, the frontend is built and copied into `build/resources/main/static`.
+During the build process, the frontend is built and copied into `backend/build/resources/main/static`.
 
 So when run, http://localhost:9090/index.html (or just http://localhost:9090) is
 the frontend where everything else is the backend.
@@ -35,13 +35,22 @@ So to develop the frontend, first start the spring backend on port 9000, then st
 Now accessing http://localhost:8080 will access the Vue development server,
 but any backend requests will be proxied to spring boot. So:
 
-Terminal 1:
+Terminal 1 for the backend:
 
+    # Either using task
+    task serve-backend
+
+    # Or by hand
+    cd backend
     ./gradlew build
     SERVER_PORT=9000 java -jar build/libs/c4viz-$VERSION.jar
 
 
-Terminal 2:
+Terminal 2 for the frontend:
 
+    # Either using task
+    task serve-frontend
+
+    # Or by hand
     cd frontend
     npm run serve -- --port 3000
