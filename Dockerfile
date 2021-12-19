@@ -8,9 +8,20 @@ RUN apt-get update && \
 
 ARG version=0.0.0
 ENV C4VIZ_VERSION=${version}
+ENV C4VIZ_SOURCE_DIR=/sourceDir
+ENV C4VIZ_CACHE=/var/cache/c4viz
+
+RUN mkdir $C4VIZ_CACHE && \
+    chown 1000:1000 $C4VIZ_CACHE
 
 COPY backend/build/libs/c4viz-${version}.jar /c4viz-${version}.jar
 
 USER 1000:1000
+RUN mkdir /tmp/cache
 
-ENTRYPOINT [ "bash", "-c", "java -jar /c4viz-${C4VIZ_VERSION}.jar \"$@\"", "--" ]
+ENTRYPOINT [ \
+    "bash", \
+    "-c", \
+    "java -jar /c4viz-${C4VIZ_VERSION}.jar \"$@\"", \
+    "--" \
+]
