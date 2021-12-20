@@ -61,8 +61,8 @@ tasks:
     deps:
       - build-backend
     cmds:
-      - echo Building docker image c4viz:$projversion
-      - docker build --build-arg version=$projversion -t c4viz:$projversion .
+      - echo Building docker image pmorch/c4viz:latest
+      - docker build --build-arg version=$projversion -t pmorch/c4viz:latest .
     env:
       projversion:
         sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
@@ -74,8 +74,7 @@ tasks:
     deps:
       - docker-build
     cmds:
-      - echo Release latest version $projversion
-      - docker tag c4viz:$projversion pmorch/c4viz:latest
+      - echo Release docker image pmorch/c4viz:latest
       - docker push pmorch/c4viz:latest
     env:
       projversion:
@@ -91,7 +90,7 @@ tasks:
       - bash -c "! docker pull pmorch/c4viz:$projversion > /dev/null 2>&1"
       - git tag $projversion
       - git push origin $projversion
-      - docker tag c4viz:$projversion pmorch/c4viz:$projversion
+      - docker tag pmorch/c4viz:latest pmorch/c4viz:$projversion
       - docker push pmorch/c4viz:$projversion
     env:
       projversion:

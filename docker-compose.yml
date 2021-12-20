@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   c4viz:
-    image: pmorch/c4viz:ignoreme
+    image: pmorch/c4viz:latest
     ports:
       - "9000:9000"
     volumes:
