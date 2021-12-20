@@ -7,7 +7,7 @@ plugins {
 
 description = 'C4 Visualizer'
 group = 'com.morch'
-version = '0.1.0'
+version = '0.1.1'
 sourceCompatibility = '11'
 
 repositories {
