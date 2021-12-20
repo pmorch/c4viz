@@ -2,7 +2,7 @@
   <div class="container-fluid vh-100 d-flex flex-column">
     <div class="row">
       <h1>
-        <img src="/structurizr-banner.png" style="height: 50px">
+        <img src="/c4viz.svg" style="height: 50px">
         C4Viz: {{ svgTitle }}
       </h1>
       <!-- Handy for debugging:
