@@ -6,6 +6,7 @@ import com.structurizr.dsl.StructurizrDslParser;
 import com.structurizr.dsl.StructurizrDslParserException;
 import com.structurizr.io.Diagram;
 import com.structurizr.io.plantuml.C4PlantUMLExporter;
+import com.structurizr.io.plantuml.StructurizrPlantUMLExporter;
 import com.structurizr.model.*;
 import com.structurizr.util.StringUtils;
 import com.structurizr.view.*;
@@ -134,7 +135,10 @@ public class OutputGenerator {
 
     private Collection<Diagram> export(Workspace workspace) {
         C4PlantUMLExporter exporter = new C4PlantUMLExporter();
-        exporter.setUseSequenceDiagrams(false);
+        workspace
+                .getViews()
+                .getConfiguration()
+                .addProperty(StructurizrPlantUMLExporter.PLANTUML_SEQUENCE_DIAGRAMS_PROPERTY, "false");
         if (workspace == null) {
             throw new IllegalArgumentException("A workspace must be provided.");
         }
