@@ -124,7 +124,6 @@ public class OutputGenerator {
     }
 
     String getViewName(Workspace workspace, View view) {
-        String prefix;
         long workspaceId = workspace.getId();
         if (workspaceId > 0) {
             return String.format("%d-%s", workspaceId, view.getKey());
