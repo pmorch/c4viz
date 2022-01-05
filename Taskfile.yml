@@ -76,9 +76,6 @@ tasks:
     cmds:
       - echo Release docker image pmorch/c4viz:latest
       - docker push pmorch/c4viz:latest
-    env:
-      projversion:
-        sh: cd backend && ./gradlew properties -q | grep "version:" | awk '{print $2}'
   release:
     deps:
       - docker-build
