@@ -21,6 +21,29 @@ public class RootController {
             @RequestParam(required = false) String source,
             @RequestParam(required = false) String render
             ) throws IOException {
+        return getVizOutput(source, render);
+    }
+
+    @GetMapping(path="/api/svg", produces = "image/svg+xml;charset=UTF-8")
+    /** c4svg doesn't take a render parameter, because I figure if a website needs an .svg,
+     * it makes no sense to not render it right away */
+    public String c4svg(
+            @RequestParam String svg,
+            @RequestParam(required = false) String source
+    ) throws IOException {
+        VizOutput viz = getVizOutput(source, "true");
+        VizResult result = (VizResult) viz;
+        for (VizData data: result.viz) {
+            if (data.getShortName().equals(svg)) {
+                return data.getSvg();
+            }
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "svg " + svg + " not found"
+        );
+    }
+
+    private VizOutput getVizOutput(String source, String render) throws IOException {
         if (source == null) {
             source = System.getenv("C4VIZ_SOURCE");
         }
@@ -31,7 +54,7 @@ public class RootController {
             return sourceHandler.getResult(source, render);
         } catch (StructurizrDslParserException exc) {
             throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, exc.getMessage(), exc
+                    HttpStatus.BAD_REQUEST, exc.getMessage(), exc
             );
         }
     }
