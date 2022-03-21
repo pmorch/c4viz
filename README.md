@@ -4,7 +4,7 @@ This is an open source visualization for [the C4 model for visualising software
 architecture](https://c4model.com/). It expects input in the form of a
 `workspace.dsl` from the [Structurizr](https://structurizr.org/) project,  e.g.
 like this [big
-bank](https://github.com/structurizr/dsl/blob/master/examples/big-bank-plc.dsl)
+bank](https://structurizr.com/dsl?example=big-bank-plc)
 example.
 
 It allows you to *view* `workspace.dsl` files but does not provide the
@@ -92,7 +92,7 @@ also specify URLs like:
 http://localhost:9000?source=https://raw.githubusercontent.com/structurizr/dsl/master/examples/deployment-groups.dsl
 
 *NOTE:* This only works for self-contained `.dsl`-s. Some, e.g.
-[test.dsl](https://raw.githubusercontent.com/structurizr/dsl/master/examples/test.dsl)
+[test.dsl](https://raw.githubusercontent.com/structurizr/dsl/master/src/test/dsl/test.dsl)
 expects `logo.png` to exist in the same directory, and so the using that as a
 source will yield an error like this: `logo.png does not exist at line 182:
 icon logo.png`. Patches to overcome this are welcome, but are not a priority
